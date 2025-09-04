@@ -3,8 +3,6 @@
  * Provides access to application logs and recent events
  */
 
-import { ResourceDefinition, ResourceContext } from '../types/index.js';
-import { log } from '../utils/logger.js';
 
 /**
  * In-memory log storage for demonstration

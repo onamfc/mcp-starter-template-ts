@@ -5,9 +5,6 @@
 
 import { promises as fs } from 'fs';
 import { join, resolve, relative } from 'path';
-import { ToolDefinition, ToolContext } from '../types/index.js';
-import { log } from '../utils/logger.js';
-import { validateFilePath } from '../utils/validation.js';
 
 /**
  * File system tool implementation

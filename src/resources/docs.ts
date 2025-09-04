@@ -3,8 +3,6 @@
  * Provides access to project documentation and help content
  */
 
-import { ResourceDefinition, ResourceContext } from '../types/index.js';
-import { log } from '../utils/logger.js';
 
 /**
  * Documentation resource implementation

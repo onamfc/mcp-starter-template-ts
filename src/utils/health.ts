@@ -4,8 +4,6 @@
  */
 
 import { createServer, Server as HttpServer } from 'http';
-import { Config, HealthCheckResponse, ServerMetrics } from '../types/index.js';
-import { log } from './logger.js';
 
 /**
  * Health checker class

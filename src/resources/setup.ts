@@ -3,10 +3,6 @@
  * This file manages the registration and configuration of all available resources
  */
 
-import { ResourceContext, ResourceDefinition } from '../types/index.js';
-import { configResource } from './config.js';
-import { docsResource } from './docs.js';
-import { logsResource } from './logs.js';
 
 /**
  * Registry of all available resources

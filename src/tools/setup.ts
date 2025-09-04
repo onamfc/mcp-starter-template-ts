@@ -3,11 +3,6 @@
  * This file manages the registration and configuration of all available tools
  */
 
-import { ToolContext, ToolDefinition } from '../types/index.js';
-import { calculateTool } from './calculator.js';
-import { fileSystemTool } from './filesystem.js';
-import { textProcessingTool } from './text-processing.js';
-import { weatherTool } from './weather.js';
 
 /**
  * Registry of all available tools

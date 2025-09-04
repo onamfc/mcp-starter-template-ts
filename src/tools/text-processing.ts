@@ -3,8 +3,6 @@
  * Provides various text manipulation and analysis capabilities
  */
 
-import { ToolDefinition, ToolContext } from '../types/index.js';
-import { log } from '../utils/logger.js';
 
 /**
  * Text processing tool implementation
