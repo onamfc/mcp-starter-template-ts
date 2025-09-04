@@ -3,14 +3,10 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   extensionsToTreatAsEsm: ['.ts'],
-  extensionsToTreatAsEsm: ['.ts'],
   globals: {
     'ts-jest': {
       useESM: true,
     },
-  },
-  moduleNameMapping: {
-    '^(\\.{1,2}/.*)\\.js$': '$1',
   },
   moduleNameMapping: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
