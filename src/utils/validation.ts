@@ -4,6 +4,7 @@
  */
 
 import { z } from 'zod';
+import { ValidationErrorDetail } from '../types/index.js';
 
 /**
  * Common validation schemas

@@ -3,6 +3,9 @@
  * Provides basic mathematical operations and calculations
  */
 
+import { ToolDefinition, ToolContext } from '../types/index.js';
+import { log } from '../utils/logger.js';
+
 
 /**
  * Calculator tool implementation

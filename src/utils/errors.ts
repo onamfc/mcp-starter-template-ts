@@ -3,6 +3,9 @@
  * Provides standardized error handling and custom error classes
  */
 
+import { ErrorResponse } from '../types/index.js';
+import { log } from './logger.js';
+
 
 /**
  * Base error class for MCP-related errors
