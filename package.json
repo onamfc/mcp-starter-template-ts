@@ -72,11 +72,5 @@
     "prettier": "^3.1.0",
     "rimraf": "^5.0.5",
     "@types/winston": "^2.4.4"
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "roots": ["<rootDir>/src"],
-    "testMatch": ["**/__tests__/**/*.test.ts"]
   }
 }
