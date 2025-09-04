@@ -4,6 +4,7 @@
  */
 
 import winston from 'winston';
+import { Config } from '../types/index.js';
 
 /**
  * Custom log format for better readability
