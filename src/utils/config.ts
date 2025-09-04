@@ -5,7 +5,7 @@
 
 import { config as loadEnv } from 'dotenv';
 import { Config, ConfigSchema } from '../types/index.js';
-import { log } from './logger';
+import { log } from './logger.js';
 
 // Load environment variables from .env file
 loadEnv();

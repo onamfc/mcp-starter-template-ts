@@ -3,6 +3,10 @@
  * Provides access to application configuration and settings
  */
 
+import { ResourceDefinition, ResourceContext } from '../types/index.js';
+import { getConfig } from '../utils/config.js';
+import { log } from '../utils/logger.js';
+
 
 /**
  * Configuration resource implementation

@@ -11,7 +11,8 @@ import {
   createErrorResponse,
   generateRequestId,
   getErrorMessage,
-}
+} from '../../utils/errors.js';
+import { ToolContext } from '../../types/index.js';
 
 describe('Error Handling', () => {
   describe('Custom Error Classes', () => {

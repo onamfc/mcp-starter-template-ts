@@ -3,6 +3,9 @@
  * Tests for mathematical calculation functionality
  */
 
+import { calculateTool } from '../../tools/calculator.js';
+import { ToolContext } from '../../types/index.js';
+
 
 const mockContext: ToolContext = {
   requestId: 'test-request-123',

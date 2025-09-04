@@ -4,6 +4,13 @@
  */
 
 import { z } from 'zod';
+import {
+  validateInput,
+  sanitizeString,
+  validateFilePath,
+  CommonSchemas,
+} from '../../utils/validation.js';
+import { ValidationErrorDetail } from '../../types/index.js';
 
 describe('Validation Utilities', () => {
   describe('validateInput', () => {

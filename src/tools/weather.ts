@@ -3,6 +3,9 @@
  * Provides weather information and forecasts (mock implementation for template)
  */
 
+import { ToolDefinition, ToolContext } from '../types/index.js';
+import { log } from '../utils/logger.js';
+
 
 /**
  * Weather tool implementation
