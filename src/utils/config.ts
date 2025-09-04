@@ -38,7 +38,7 @@ export function loadConfig(): Config {
 export function validateConfig(): void {
   try {
     const config = loadConfig();
-    console.log('Configuration validated successfully:', {
+    console.error('Configuration validated successfully:', {
       port: config.port,
       host: config.host,
       environment: config.environment,

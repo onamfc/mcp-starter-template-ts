@@ -123,7 +123,7 @@ class MCPServer {
         log.withContext(requestId).error(`Tool execution failed: ${name}`, error instanceof Error ? error : new Error(String(error)));
         throw error;
       }
-    });
+    }) as any;
   }
 
   /**
@@ -219,6 +219,7 @@ class MCPServer {
    */
   public async start(): Promise<void> {
     try {
+      console.error('Starting MCP server...');
       log.info('Starting MCP server...', {
         port: this.config.port,
         environment: this.config.environment,
@@ -239,7 +240,7 @@ class MCPServer {
       log.info('MCP server started successfully');
     } catch (error) {
       log.error('Failed to start MCP server', error instanceof Error ? error : new Error(String(error)));
-      process.exit(1);
+      console.error('Failed to initialize MCP server:', error);
     }
   }
 }
@@ -255,7 +256,7 @@ async function main(): Promise<void> {
     const server = new MCPServer();
     await server.start();
   } catch (error) {
-    console.error('Failed to initialize MCP server:', error);
+   console.error('Failed to initialize MCP server:', error);
     process.exit(1);
   }
 }
