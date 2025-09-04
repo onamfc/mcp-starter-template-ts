@@ -55,7 +55,7 @@
     "zod": "^3.22.4",
     "winston": "^3.11.0",
     "dotenv": "^16.3.1",
-    "@types/winston": "^2.4.4"
+    "tsc-alias": "^1.8.8"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",

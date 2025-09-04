@@ -3,10 +3,7 @@
  * Global test setup that runs before all tests
  */
 
-import { initializeLogger } from '../utils/logger';
-import { resetConfigCache } from '../utils/config';
-
-// Mock configuration for testing
+// Mock the config module before any imports
 const mockConfig = {
   port: 3000,
   host: 'localhost',
@@ -17,7 +14,7 @@ const mockConfig = {
   environment: 'test' as const,
 };
 
-// Mock the config module
+// Mock modules before importing them
 jest.mock('../utils/config', () => ({
   getConfig: jest.fn(() => mockConfig),
   loadConfig: jest.fn(() => mockConfig),
@@ -28,7 +25,6 @@ jest.mock('../utils/config', () => ({
   isTest: jest.fn(() => true),
 }));
 
-// Mock the logger to prevent actual logging during tests
 jest.mock('../utils/logger', () => ({
   initializeLogger: jest.fn(),
   getLogger: jest.fn(() => ({
@@ -50,6 +46,9 @@ jest.mock('../utils/logger', () => ({
     })),
   },
 }));
+
+// Now import the functions we need
+const { resetConfigCache } = require('../utils/config.js');
 
 // Global test setup
 beforeEach(() => {
