@@ -17,7 +17,7 @@ module.exports = {
     'src/**/*.ts',
     '!src/**/*.d.ts',
     '!src/__tests__/**',
-    '!src/server.ts', // Exclude main server file from coverage as it's integration-focused
+    '!src/server.ts',
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html', 'json'],
@@ -31,7 +31,7 @@ module.exports = {
   },
   setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup.ts'],
   transform: {
-    '^.+\\.tsx?$': ['ts-jest', {
+    '^.+\\.ts$': ['ts-jest', {
       useESM: true,
     }],
   },

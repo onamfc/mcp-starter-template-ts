@@ -48,7 +48,7 @@ jest.mock('../utils/logger', () => ({
 }));
 
 // Now import the functions we need
-import { resetConfigCache } from '../utils/config.js';
+const { resetConfigCache } = require('../utils/config');
 
 // Global test setup
 beforeEach(() => {
