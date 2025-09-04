@@ -11,6 +11,7 @@ import {
   createErrorResponse,
   generateRequestId,
   getErrorMessage,
+}
 
 describe('Error Handling', () => {
   describe('Custom Error Classes', () => {
