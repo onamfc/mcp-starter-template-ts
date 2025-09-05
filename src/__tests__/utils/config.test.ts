@@ -103,12 +103,11 @@ describe('utils/config', () => {
         jest.isolateModules(() => {
           const mod = jest.requireActual('../../utils/config.js') as ConfigModule;
 
-          const exitSpy = jest.spyOn(process, 'exit').mockImplementation(
-            ((code?: string | number | null | undefined): never => {
-              throw new Error(`__exit__:${code ?? ''}`);
-            }) as unknown as (code?: string | number | null | undefined) => never
-          );
-
+          const exitSpy = jest.spyOn(process, 'exit').mockImplementation(((
+            code?: string | number | null | undefined
+          ): never => {
+            throw new Error(`__exit__:${code ?? ''}`);
+          }) as unknown as (code?: string | number | null | undefined) => never);
 
           const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -152,17 +151,14 @@ describe('utils/config', () => {
       }
     );
 
-    await withEnv(
-      { NODE_ENV: 'test', HOST: 'localhost', LOG_LEVEL: 'error', PORT: '3000' },
-      () => {
-        jest.isolateModules(() => {
-          const mod = jest.requireActual('../../utils/config.js') as ConfigModule;
-          mod.resetConfigCache();
-          expect(mod.isDevelopment()).toBe(false);
-          expect(mod.isProduction()).toBe(false);
-          expect(mod.isTest()).toBe(true);
-        });
-      }
-    );
+    await withEnv({ NODE_ENV: 'test', HOST: 'localhost', LOG_LEVEL: 'error', PORT: '3000' }, () => {
+      jest.isolateModules(() => {
+        const mod = jest.requireActual('../../utils/config.js') as ConfigModule;
+        mod.resetConfigCache();
+        expect(mod.isDevelopment()).toBe(false);
+        expect(mod.isProduction()).toBe(false);
+        expect(mod.isTest()).toBe(true);
+      });
+    });
   });
 });

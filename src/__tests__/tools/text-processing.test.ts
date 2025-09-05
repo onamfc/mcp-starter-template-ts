@@ -6,12 +6,12 @@ type TextBlock = { type: 'text'; text: string };
 type ToolResponse = { content: TextBlock[]; isError?: boolean };
 
 function isToolResponse(x: unknown): x is ToolResponse {
-  return !!x &&
+  return (
+    !!x &&
     typeof x === 'object' &&
     Array.isArray((x as any).content) &&
-    (x as any).content.every(
-      (c: any) => c && c.type === 'text' && typeof c.text === 'string'
-    );
+    (x as any).content.every((c: any) => c && c.type === 'text' && typeof c.text === 'string')
+  );
 }
 
 function expectToolResponse(res: unknown): ToolResponse {
@@ -30,7 +30,6 @@ function firstJson(res: unknown) {
   expect(first.type).toBe('text');
   return JSON.parse(first.text);
 }
-
 
 describe('text-processing tool', () => {
   it('uppercase', async () => {

@@ -88,7 +88,6 @@ describe('utils/errors – createErrorResponse', () => {
     expect(ctxLogger.error).toHaveBeenCalled(); // <- safe, no results[0]
   });
 
-
   it('uses INTERNAL_ERROR for generic Error and includes stack', () => {
     const e = new Error('oops');
     const res = createErrorResponse(e, 'rid');
@@ -173,24 +172,23 @@ describe('utils/errors – setupGlobalErrorHandlers', () => {
     // store only the handlers we need
     const handlers: Partial<Record<KnownEvents, (...args: unknown[]) => void>> = {};
 
-    const onSpy = jest
-      .spyOn(process, 'on')
-      .mockImplementation(
-        ((event: string, handler: (...args: unknown[]) => void) => {
-          if (event === 'unhandledRejection' || event === 'uncaughtException') {
-            handlers[event] = handler;
-          }
-          return process;
-        }) as unknown as typeof process.on
-      );
+    const onSpy = jest.spyOn(process, 'on').mockImplementation(((
+      event: string,
+      handler: (...args: unknown[]) => void
+    ) => {
+      if (event === 'unhandledRejection' || event === 'uncaughtException') {
+        handlers[event] = handler;
+      }
+      return process;
+    }) as unknown as typeof process.on);
 
     const errorSpy = jest.spyOn(log, 'error');
 
-    const exitSpy = jest.spyOn(process, 'exit').mockImplementation(
-      ((code?: string | number | null | undefined): never => {
-        throw new Error(`__exit__:${code ?? ''}`);
-      }) as unknown as (code?: string | number | null | undefined) => never
-    );
+    const exitSpy = jest.spyOn(process, 'exit').mockImplementation(((
+      code?: string | number | null | undefined
+    ): never => {
+      throw new Error(`__exit__:${code ?? ''}`);
+    }) as unknown as (code?: string | number | null | undefined) => never);
 
     setupGlobalErrorHandlers();
 
@@ -200,7 +198,7 @@ describe('utils/errors – setupGlobalErrorHandlers', () => {
     expect(errorSpy).toHaveBeenCalledWith(
       'Unhandled promise rejection',
       expect.any(Error),
-      expect.objectContaining({ promise: 'PROM' }),
+      expect.objectContaining({ promise: 'PROM' })
     );
 
     // trigger uncaughtException
@@ -213,5 +211,4 @@ describe('utils/errors – setupGlobalErrorHandlers', () => {
     exitSpy.mockRestore();
     errorSpy.mockRestore();
   });
-
 });

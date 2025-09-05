@@ -40,10 +40,12 @@ import { setupTools, getTool, validateToolArguments } from '../../tools/setup.js
 describe('tools/setup', () => {
   it('setupTools returns a registry including known tools', async () => {
     const tools = await setupTools();
-    const names = tools.map((t) => t.name).sort();
+    const names = tools.map(t => t.name).sort();
 
     // Expect stubs + real ones
-    expect(names).toEqual(expect.arrayContaining(['filesystem', 'weather', 'calculator', 'text-processing']));
+    expect(names).toEqual(
+      expect.arrayContaining(['filesystem', 'weather', 'calculator', 'text-processing'])
+    );
 
     // Ensure there are exactly four tools as defined by the registry
     expect(tools).toHaveLength(4);
