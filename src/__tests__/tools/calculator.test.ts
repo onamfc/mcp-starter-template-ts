@@ -6,7 +6,6 @@
 import { calculateTool } from '../../tools/calculator.js';
 import { ToolContext } from '../../types/index.js';
 
-
 const mockContext: ToolContext = {
   requestId: 'test-request-123',
   timestamp: new Date().toISOString(),
@@ -15,10 +14,7 @@ const mockContext: ToolContext = {
 describe('Calculator Tool', () => {
   describe('Basic operations', () => {
     it('should calculate simple addition', async () => {
-      const result = await calculateTool.handler(
-        { expression: '2 + 3' },
-        mockContext
-      );
+      const result = await calculateTool.handler({ expression: '2 + 3' }, mockContext);
 
       expect(result).toEqual({
         content: [
@@ -65,10 +61,7 @@ describe('Calculator Tool', () => {
 
   describe('Error handling', () => {
     it('should handle invalid expressions', async () => {
-      const result = await calculateTool.handler(
-        { expression: 'invalid expression' },
-        mockContext
-      );
+      const result = await calculateTool.handler({ expression: 'invalid expression' }, mockContext);
 
       expect(result).toEqual({
         content: [

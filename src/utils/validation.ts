@@ -14,27 +14,28 @@ export const CommonSchemas = {
    * Non-empty string validation
    */
   nonEmptyString: z.string().min(1, 'Value cannot be empty'),
-  
+
   /**
    * Positive number validation
    */
   positiveNumber: z.number().positive('Value must be positive'),
-  
+
   /**
    * File path validation (basic security check)
    */
-  filePath: z.string()
+  filePath: z
+    .string()
     .min(1, 'File path cannot be empty')
     .refine(
       path => !path.includes('..') && !path.startsWith('/'),
       'Invalid file path: no parent directory traversal or absolute paths allowed'
     ),
-  
+
   /**
    * Email validation
    */
   email: z.string().email('Invalid email format'),
-  
+
   /**
    * URL validation
    */
@@ -60,7 +61,7 @@ export function validateInput<T>(
       }));
       return { success: false, errors };
     }
-    
+
     // Re-throw non-validation errors
     throw error;
   }
@@ -81,11 +82,11 @@ export function sanitizeString(input: string): string {
  */
 export function validateFilePath(path: string): string {
   const validation = validateInput(CommonSchemas.filePath, path);
-  
+
   if (!validation.success) {
     throw new Error(`Invalid file path: ${validation.errors[0]?.message}`);
   }
-  
+
   // Additional sanitization
   return path.replace(/[^a-zA-Z0-9.\-_/]/g, '');
 }
@@ -96,14 +97,12 @@ export function validateFilePath(path: string): string {
 export function createToolValidator<T>(schema: z.ZodSchema<T>) {
   return (input: unknown): T => {
     const validation = validateInput(schema, input);
-    
+
     if (!validation.success) {
-      const errorMessage = validation.errors
-        .map(err => `${err.field}: ${err.message}`)
-        .join(', ');
+      const errorMessage = validation.errors.map(err => `${err.field}: ${err.message}`).join(', ');
       throw new Error(`Validation failed: ${errorMessage}`);
     }
-    
+
     return validation.data;
   };
 }
@@ -119,7 +118,8 @@ export const ToolArgumentsSchema = z.object({
 /**
  * Validation schema for resource URIs
  */
-export const ResourceUriSchema = z.string()
+export const ResourceUriSchema = z
+  .string()
   .min(1, 'Resource URI cannot be empty')
   .refine(
     uri => uri.startsWith('resource://') || uri.startsWith('file://'),

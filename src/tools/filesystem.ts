@@ -41,7 +41,12 @@ export const fileSystemTool: ToolDefinition = {
     required: ['operation', 'path'],
   },
   handler: async (args: Record<string, unknown>, context: ToolContext) => {
-    const { operation, path, content, encoding = 'utf8' } = args as {
+    const {
+      operation,
+      path,
+      content,
+      encoding = 'utf8',
+    } = args as {
       operation: 'read' | 'write' | 'list' | 'exists';
       path: string;
       content?: string;
@@ -103,9 +108,15 @@ export const fileSystemTool: ToolDefinition = {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown file system error';
 
-      log.withContext(context.requestId).error(`File system operation failed: ${operation}`, error instanceof Error ? error : new Error(String(error)), {
-        path,
-      });
+      log
+        .withContext(context.requestId)
+        .error(
+          `File system operation failed: ${operation}`,
+          error instanceof Error ? error : new Error(String(error)),
+          {
+            path,
+          }
+        );
 
       return {
         content: [
@@ -123,7 +134,10 @@ export const fileSystemTool: ToolDefinition = {
 /**
  * Read file content
  */
-async function readFile(path: string, encoding: 'utf8' | 'base64'): Promise<{ content: string; size: number }> {
+async function readFile(
+  path: string,
+  encoding: 'utf8' | 'base64'
+): Promise<{ content: string; size: number }> {
   const content = await fs.readFile(path, encoding);
   const stats = await fs.stat(path);
 
@@ -136,7 +150,11 @@ async function readFile(path: string, encoding: 'utf8' | 'base64'): Promise<{ co
 /**
  * Write file content
  */
-async function writeFile(path: string, content: string, encoding: 'utf8' | 'base64'): Promise<{ success: boolean; bytesWritten: number }> {
+async function writeFile(
+  path: string,
+  content: string,
+  encoding: 'utf8' | 'base64'
+): Promise<{ success: boolean; bytesWritten: number }> {
   await fs.writeFile(path, content, encoding);
   const stats = await fs.stat(path);
 
@@ -149,11 +167,13 @@ async function writeFile(path: string, content: string, encoding: 'utf8' | 'base
 /**
  * List directory contents
  */
-async function listDirectory(path: string): Promise<{ files: Array<{ name: string; type: string; size: number }> }> {
+async function listDirectory(
+  path: string
+): Promise<{ files: Array<{ name: string; type: string; size: number }> }> {
   const entries = await fs.readdir(path, { withFileTypes: true });
 
   const files = await Promise.all(
-    entries.map(async (entry) => {
+    entries.map(async entry => {
       const entryPath = join(path, entry.name);
       const stats = await fs.stat(entryPath);
 

@@ -6,7 +6,6 @@
 import { ToolDefinition, ToolContext } from '../types/index.js';
 import { log } from '../utils/logger.js';
 
-
 /**
  * Weather tool implementation
  */
@@ -35,7 +34,11 @@ export const weatherTool: ToolDefinition = {
     required: ['location'],
   },
   handler: async (args: Record<string, unknown>, context: ToolContext) => {
-    const { location, units = 'metric', forecast = false } = args as {
+    const {
+      location,
+      units = 'metric',
+      forecast = false,
+    } = args as {
       location: string;
       units?: 'metric' | 'imperial' | 'kelvin';
       forecast?: boolean;
@@ -67,9 +70,15 @@ export const weatherTool: ToolDefinition = {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown weather service error';
 
-      log.withContext(context.requestId).error('Weather data fetch failed', error instanceof Error ? error : new Error(String(error)), {
-        location,
-      });
+      log
+        .withContext(context.requestId)
+        .error(
+          'Weather data fetch failed',
+          error instanceof Error ? error : new Error(String(error)),
+          {
+            location,
+          }
+        );
 
       return {
         content: [
@@ -115,7 +124,11 @@ interface WeatherData {
 /**
  * Generate mock weather data for demonstration
  */
-function generateMockWeatherData(location: string, units: string, includeForecast: boolean): WeatherData {
+function generateMockWeatherData(
+  location: string,
+  units: string,
+  includeForecast: boolean
+): WeatherData {
   const baseTemp = Math.floor(Math.random() * 40) + 5; // 5-45°C
 
   const unitLabels = {
@@ -124,7 +137,15 @@ function generateMockWeatherData(location: string, units: string, includeForecas
     kelvin: { temperature: 'K', windSpeed: 'm/s', pressure: 'hPa' },
   };
 
-  const descriptions = ['Sunny', 'Cloudy', 'Partly Cloudy', 'Rainy', 'Thunderstorms', 'Snow', 'Foggy'];
+  const descriptions = [
+    'Sunny',
+    'Cloudy',
+    'Partly Cloudy',
+    'Rainy',
+    'Thunderstorms',
+    'Snow',
+    'Foggy',
+  ];
   const description = descriptions[Math.floor(Math.random() * descriptions.length)] || 'Clear';
 
   const data: WeatherData = {
@@ -145,7 +166,8 @@ function generateMockWeatherData(location: string, units: string, includeForecas
     data.forecast = Array.from({ length: 5 }, (_, i) => {
       const date = new Date();
       date.setDate(date.getDate() + i + 1);
-      const forecastDescription = descriptions[Math.floor(Math.random() * descriptions.length)] || 'Clear';
+      const forecastDescription =
+        descriptions[Math.floor(Math.random() * descriptions.length)] || 'Clear';
 
       return {
         date: date.toISOString().split('T')[0] || '',

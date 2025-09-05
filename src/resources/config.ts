@@ -7,7 +7,6 @@ import { ResourceDefinition, ResourceContext } from '../types/index.js';
 import { getConfig } from '../utils/config.js';
 import { log } from '../utils/logger.js';
 
-
 /**
  * Configuration resource implementation
  */
@@ -43,7 +42,13 @@ export const configResource: ResourceDefinition = {
         },
       ];
     } catch (error) {
-      log.withContext(context.requestId).error('Failed to access configuration resource', error instanceof Error ? error : new Error(String(error)), { uri });
+      log
+        .withContext(context.requestId)
+        .error(
+          'Failed to access configuration resource',
+          error instanceof Error ? error : new Error(String(error)),
+          { uri }
+        );
       throw error;
     }
   },

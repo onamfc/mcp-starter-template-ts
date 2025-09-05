@@ -62,7 +62,7 @@ export class HealthChecker {
    */
   public async stop(): Promise<void> {
     if (this.server) {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         this.server!.close(() => {
           log.info('Health check server stopped');
           resolve();

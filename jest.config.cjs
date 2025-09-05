@@ -1,18 +1,27 @@
 /** @type {import('jest').Config} */
 module.exports = {
-  preset: 'ts-jest/presets/default-esm',
+  // Run tests through ts-jest, compiling to CJS for Jest
+  preset: 'ts-jest',
   testEnvironment: 'node',
-  extensionsToTreatAsEsm: ['.ts'],
-  globals: {
-    'ts-jest': {
-      useESM: true,
-    },
+
+  // Transform TS using our Jest-specific tsconfig (CJS)
+  transform: {
+    '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.jest.json', useESM: false }],
   },
-  moduleNameMapping: {
+
+  // Make sure ".ts" setup is compiled by ts-jest
+  setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup.ts'],
+
+  // Map NodeNext-style ".js" imports from TS to bare paths for Jest
+  moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
+
+  // Roots & patterns
   roots: ['<rootDir>/src'],
   testMatch: ['**/__tests__/**/*.test.ts'],
+
+  // Coverage (unchanged)
   collectCoverageFrom: [
     'src/**/*.ts',
     '!src/**/*.d.ts',
@@ -22,19 +31,10 @@ module.exports = {
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html', 'json'],
   coverageThreshold: {
-    global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: 80,
-    },
+    global: { branches: 80, functions: 80, lines: 80, statements: 80 },
   },
-  setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup.ts'],
-  transform: {
-    '^.+\\.ts$': ['ts-jest', {
-      useESM: true,
-    }],
-  },
+
+  // Other knobs
   testTimeout: 10000,
   verbose: true,
   errorOnDeprecated: true,

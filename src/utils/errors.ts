@@ -6,7 +6,6 @@
 import { ErrorResponse } from '../types/index.js';
 import { log } from './logger.js';
 
-
 /**
  * Base error class for MCP-related errors
  */
@@ -49,7 +48,9 @@ export class ToolExecutionError extends MCPError {
   constructor(message: string, toolName: string, details?: unknown) {
     super(message, 'TOOL_EXECUTION_ERROR', 500, {
       toolName,
-      ...(details && typeof details === 'object' && details !== null ? details as Record<string, unknown> : {})
+      ...(details && typeof details === 'object' && details !== null
+        ? (details as Record<string, unknown>)
+        : {}),
     });
     this.name = 'ToolExecutionError';
   }
@@ -62,7 +63,9 @@ export class ResourceAccessError extends MCPError {
   constructor(message: string, resourceUri: string, details?: unknown) {
     super(message, 'RESOURCE_ACCESS_ERROR', 403, {
       resourceUri,
-      ...(details && typeof details === 'object' && details !== null ? details as Record<string, unknown> : {})
+      ...(details && typeof details === 'object' && details !== null
+        ? (details as Record<string, unknown>)
+        : {}),
     });
     this.name = 'ResourceAccessError';
   }
@@ -167,7 +170,7 @@ export function setupGlobalErrorHandlers(): void {
     });
   });
 
-  process.on('uncaughtException', (error) => {
+  process.on('uncaughtException', error => {
     log.error('Uncaught exception', error);
     process.exit(1);
   });

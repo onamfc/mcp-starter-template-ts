@@ -11,6 +11,23 @@ import {
   CommonSchemas,
 } from '../../utils/validation.js';
 
+// Type guards to narrow validateInput results
+function isSuccessResult<T>(r: unknown): r is { success: true; data: T } {
+  return !!r && typeof r === 'object' && (r as any).success === true && 'data' in (r as any);
+}
+
+function isFailureResult(
+  r: unknown
+): r is { success: false; errors: Array<{ field?: string; message?: string }> } {
+  return (
+    !!r &&
+    typeof r === 'object' &&
+    (r as any).success === false &&
+    'errors' in (r as any) &&
+    Array.isArray((r as any).errors)
+  );
+}
+
 describe('Validation Utilities', () => {
   describe('validateInput', () => {
     const testSchema = z.object({
@@ -19,23 +36,30 @@ describe('Validation Utilities', () => {
     });
 
     it('should validate correct input', () => {
-      const result = validateInput(testSchema, { name: 'John', age: 30 });
-      
+      const result = validateInput(testSchema, { name: 'Brandon', age: 44 });
+
       expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data).toEqual({ name: 'John', age: 30 });
+
+      if (!isSuccessResult<{ name: string; age: number }>(result)) {
+        fail(`Expected success result with data, got: ${JSON.stringify(result)}`);
       }
+
+      expect(result.data).toEqual({ name: 'Brandon', age: 44 });
     });
 
     it('should return errors for invalid input', () => {
       const result = validateInput(testSchema, { name: '', age: -1 });
-      
+
       expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.errors).toHaveLength(2);
-        expect(result.errors[0].field).toBe('name');
-        expect(result.errors[1].field).toBe('age');
+
+      if (!isFailureResult(result)) {
+        fail(`Expected failure result with errors, got: ${JSON.stringify(result)}`);
       }
+
+      // Errors exist and are an array thanks to the type guard above
+      expect(result.errors).toHaveLength(2);
+      expect(result.errors[0]?.field).toBe('name');
+      expect(result.errors[1]?.field).toBe('age');
     });
   });
 
@@ -43,21 +67,18 @@ describe('Validation Utilities', () => {
     it('should remove dangerous characters', () => {
       const input = '<script>alert("xss")</script>';
       const result = sanitizeString(input);
-      
       expect(result).toBe('scriptalert(xss)/script');
     });
 
     it('should trim whitespace', () => {
       const input = '  hello world  ';
       const result = sanitizeString(input);
-      
       expect(result).toBe('hello world');
     });
 
     it('should remove quotes', () => {
       const input = 'test "quoted" content';
       const result = sanitizeString(input);
-      
       expect(result).toBe('test quoted content');
     });
   });

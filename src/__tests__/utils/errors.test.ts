@@ -17,7 +17,7 @@ describe('Error Handling', () => {
   describe('Custom Error Classes', () => {
     it('should create MCPError with default values', () => {
       const error = new MCPError('Test error');
-      
+
       expect(error.message).toBe('Test error');
       expect(error.code).toBe('MCP_ERROR');
       expect(error.statusCode).toBe(500);
@@ -26,7 +26,7 @@ describe('Error Handling', () => {
 
     it('should create ValidationError', () => {
       const error = new ValidationError('Invalid input', { field: 'name' });
-      
+
       expect(error.message).toBe('Invalid input');
       expect(error.code).toBe('VALIDATION_ERROR');
       expect(error.statusCode).toBe(400);
@@ -35,7 +35,7 @@ describe('Error Handling', () => {
 
     it('should create ToolExecutionError', () => {
       const error = new ToolExecutionError('Tool failed', 'calculate');
-      
+
       expect(error.message).toBe('Tool failed');
       expect(error.code).toBe('TOOL_EXECUTION_ERROR');
       expect(error.details).toEqual({ toolName: 'calculate' });
@@ -43,7 +43,7 @@ describe('Error Handling', () => {
 
     it('should create ResourceAccessError', () => {
       const error = new ResourceAccessError('Access denied', 'resource://test');
-      
+
       expect(error.message).toBe('Access denied');
       expect(error.code).toBe('RESOURCE_ACCESS_ERROR');
       expect(error.details).toEqual({ resourceUri: 'resource://test' });
@@ -74,7 +74,7 @@ describe('Error Handling', () => {
     it('should generate unique request IDs', () => {
       const id1 = generateRequestId();
       const id2 = generateRequestId();
-      
+
       expect(id1).not.toBe(id2);
       expect(id1).toMatch(/^req_\d+_[a-z0-9]+$/);
       expect(id2).toMatch(/^req_\d+_[a-z0-9]+$/);

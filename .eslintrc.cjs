@@ -1,15 +1,17 @@
+/* eslint-env node */
 module.exports = {
   parser: '@typescript-eslint/parser',
   extends: [
     'eslint:recommended',
-    '@typescript-eslint/eslint-recommended',
-    '@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended',
+    // add this if you want type-aware rules:
+    // 'plugin:@typescript-eslint/recommended-requiring-type-checking'
   ],
   plugins: ['@typescript-eslint'],
   parserOptions: {
     ecmaVersion: 2022,
     sourceType: 'module',
-    project: './tsconfig.json',
+    project: './tsconfig.eslint.json',
     tsconfigRootDir: __dirname,
   },
   env: {
@@ -19,9 +21,9 @@ module.exports = {
   },
   rules: {
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-    '@typescript-eslint/no-explicit-any': 'warn',
-    '@typescript-eslint/no-var-requires': 'off', // Allow require in test setup
-    'no-console': ['warn', { allow: ['error'] }], // Allow console.error
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-var-requires': 'off',
+    'no-console': ['warn', { allow: ['error'] }],
     'no-debugger': 'error',
     'prefer-const': 'error',
     'no-var': 'error',
@@ -30,13 +32,16 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['**/__tests__/**/*', '**/*.test.ts'],
+      files: [
+        '**/__tests__/**/*.{ts,tsx}',
+        '**/*.{test,spec}.{ts,tsx}'
+      ],
       rules: {
-        'no-console': 'off', // Allow console in tests
-        '@typescript-eslint/no-explicit-any': 'off', // Allow any in tests
-        '@typescript-eslint/no-var-requires': 'off', // Allow require in tests
+        'no-console': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-var-requires': 'off'
       }
     }
   ],
-  ignorePatterns: ['dist', 'node_modules', 'coverage', '*.js']
+  ignorePatterns: ['dist', 'node_modules', 'coverage']
 };

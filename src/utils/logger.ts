@@ -19,7 +19,7 @@ const logFormat = winston.format.combine(
     const prefix = requestId ? `[${requestId}]` : '';
     const userInfo = userId ? `[user:${userId}]` : '';
     const metaString = Object.keys(meta).length > 0 ? JSON.stringify(meta) : '';
-    
+
     return `${timestamp} [${level.toUpperCase()}] ${prefix}${userInfo} ${message} ${metaString}`.trim();
   })
 );
@@ -30,10 +30,7 @@ const logFormat = winston.format.combine(
 export function createLogger(config: Config): winston.Logger {
   const transports: winston.transport[] = [
     new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.colorize(),
-        logFormat
-      ),
+      format: winston.format.combine(winston.format.colorize(), logFormat),
     }),
   ];
 
@@ -89,19 +86,19 @@ export const log = {
   error: (message: string, error?: Error, meta?: Record<string, unknown>): void => {
     getLogger().error(message, { error, ...meta });
   },
-  
+
   warn: (message: string, meta?: Record<string, unknown>): void => {
     getLogger().warn(message, meta);
   },
-  
+
   info: (message: string, meta?: Record<string, unknown>): void => {
     getLogger().info(message, meta);
   },
-  
+
   debug: (message: string, meta?: Record<string, unknown>): void => {
     getLogger().debug(message, meta);
   },
-  
+
   /**
    * Log with request context for better tracing
    */
@@ -109,15 +106,15 @@ export const log = {
     error: (message: string, error?: Error, meta?: Record<string, unknown>): void => {
       getLogger().error(message, { requestId, userId, error, ...meta });
     },
-    
+
     warn: (message: string, meta?: Record<string, unknown>): void => {
       getLogger().warn(message, { requestId, userId, ...meta });
     },
-    
+
     info: (message: string, meta?: Record<string, unknown>): void => {
       getLogger().info(message, { requestId, userId, ...meta });
     },
-    
+
     debug: (message: string, meta?: Record<string, unknown>): void => {
       getLogger().debug(message, { requestId, userId, ...meta });
     },
