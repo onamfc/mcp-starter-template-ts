@@ -27,8 +27,8 @@ Choose your preferred package manager:
 
 **Using npm:**
 ```bash
-git clone https://github.com/onamfc/mcp-starter-template.git
-cd mcp-starter-template
+git clone https://github.com/onamfc/mcp-starter-template-ts.git
+cd mcp-starter-template-ts
 npm install
 npm run build
 npm start
@@ -36,8 +36,8 @@ npm start
 
 **Using yarn:**
 ```bash
-git clone https://github.com/onamfc/mcp-starter-template.git
-cd mcp-starter-template
+git clone https://github.com/onamfc/mcp-starter-template-ts.git
+cd mcp-starter-template-ts
 yarn install
 yarn build
 yarn start
@@ -45,8 +45,8 @@ yarn start
 
 **Using pnpm:**
 ```bash
-git clone https://github.com/onamfc/mcp-starter-template.git
-cd mcp-starter-template
+git clone https://github.com/onamfc/mcp-starter-template-ts.git
+cd mcp-starter-template-ts
 pnpm install
 pnpm build
 pnpm start
