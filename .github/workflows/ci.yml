@@ -10,6 +10,9 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     strategy:
       matrix:
         node-version: [18.x, 20.x]
@@ -39,14 +42,36 @@ jobs:
       - name: Run tests
         run: npm run test:coverage
 
-      - name: Upload coverage to Codecov
+      # 🔹 Always upload the coverage folder so you can inspect reports from CI runs
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.node-version }}
+          path: coverage/
+          retention-days: 7
+
+      # 🔹 Codecov upload using OIDC (skips forked PRs)
+      - name: Upload coverage to Codecov (OIDC)
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false }}
         uses: codecov/codecov-action@v5
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}  # or set `use_oidc: true` + permissions
+          use_oidc: true
           files: ./coverage/lcov.info
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: true
+
+      # 🔹 Best-effort Codecov on forked PRs (won't fail CI if upload is blocked)
+      - name: Upload coverage to Codecov (best-effort on forks)
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork }}
+        uses: codecov/codecov-action@v5
+        with:
+          use_oidc: true
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
 
   build:
     name: Build
@@ -142,4 +167,3 @@ jobs:
       - name: Run dependency check
         if: github.event_name == 'pull_request'
         uses: actions/dependency-review-action@v4
-
