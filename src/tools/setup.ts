@@ -9,7 +9,6 @@ import { fileSystemTool } from './filesystem.js';
 import { textProcessingTool } from './text-processing.js';
 import { weatherTool } from './weather.js';
 
-
 /**
  * Registry of all available tools
  */
@@ -46,13 +45,13 @@ export function validateToolArguments(
   // Basic validation - in a real implementation you'd use a proper schema validator
   const required = tool.inputSchema.required || [];
   const missing = required.filter(field => !(field in args));
-  
+
   if (missing.length > 0) {
     return {
       valid: false,
       errors: missing.map(field => `Missing required parameter: ${field}`),
     };
   }
-  
+
   return { valid: true };
 }

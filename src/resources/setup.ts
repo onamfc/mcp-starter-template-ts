@@ -11,11 +11,7 @@ import { logsResource } from './logs.js';
 /**
  * Registry of all available resources
  */
-const resourceRegistry: ResourceDefinition[] = [
-  configResource,
-  docsResource,
-  logsResource,
-];
+const resourceRegistry: ResourceDefinition[] = [configResource, docsResource, logsResource];
 
 /**
  * Setup and return all available resources

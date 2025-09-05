@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.mts",
+    "src/**/*.cts",
+
+    // include tests
+    "src/__tests__/**/*.ts",
+    "src/__tests__/**/*.tsx",
+
+    // (optional) include config files if you lint them
+    "**/*.config.ts",
+    "**/*.config.cjs",
+    "**/*.config.mjs",
+    ".eslintrc.cjs"
+  ],
+  "exclude": [
+    "dist",
+    "build",
+    "node_modules"
+  ]
+}

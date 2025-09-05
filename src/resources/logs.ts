@@ -6,7 +6,6 @@
 import { ResourceDefinition, ResourceContext } from '../types/index.js';
 import { log } from '../utils/logger.js';
 
-
 /**
  * In-memory log storage for demonstration
  * In production, you'd read from actual log files or a logging service
@@ -46,7 +45,13 @@ export const logsResource: ResourceDefinition = {
         },
       ];
     } catch (error) {
-      log.withContext(context.requestId).error('Failed to access logs resource', error instanceof Error ? error : new Error(String(error)), { uri });
+      log
+        .withContext(context.requestId)
+        .error(
+          'Failed to access logs resource',
+          error instanceof Error ? error : new Error(String(error)),
+          { uri }
+        );
       throw error;
     }
   },
@@ -86,7 +91,7 @@ function getRecentLogs(limit: number = 50): typeof recentLogs {
  * Add log entry to in-memory storage
  * This would be called by the logging system in a real implementation
  */
-export function addLogEntry(entry: typeof recentLogs[0]): void {
+export function addLogEntry(entry: (typeof recentLogs)[0]): void {
   recentLogs.push(entry);
 
   // Keep only the most recent entries

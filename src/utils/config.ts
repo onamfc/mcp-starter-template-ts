@@ -5,7 +5,6 @@
 
 import { config as loadEnv } from 'dotenv';
 import { Config, ConfigSchema } from '../types/index.js';
-import { log } from './logger.js';
 
 // Load environment variables from .env file
 loadEnv();
@@ -38,7 +37,7 @@ export function loadConfig(): Config {
 export function validateConfig(): void {
   try {
     const config = loadConfig();
-    console.log('Configuration validated successfully:', {
+    console.error('Configuration validated successfully:', {
       port: config.port,
       host: config.host,
       environment: config.environment,

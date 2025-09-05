@@ -6,12 +6,11 @@
 import { ToolDefinition, ToolContext } from '../types/index.js';
 import { log } from '../utils/logger.js';
 
-
 /**
  * Calculator tool implementation
  */
 export const calculateTool: ToolDefinition = {
-  name: 'calculate',
+  name: 'calculator',
   description: 'Perform mathematical calculations with support for basic arithmetic operations',
   inputSchema: {
     type: 'object',
@@ -47,9 +46,8 @@ export const calculateTool: ToolDefinition = {
       const result = evaluateExpression(sanitizedExpression);
 
       // Format result with specified precision
-      const formattedResult = typeof precision === 'number'
-        ? Number(result.toFixed(precision))
-        : result;
+      const formattedResult =
+        typeof precision === 'number' ? Number(result.toFixed(precision)) : result;
 
       log.withContext(context.requestId).info('Calculation completed', {
         expression: sanitizedExpression,
@@ -67,9 +65,11 @@ export const calculateTool: ToolDefinition = {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown calculation error';
 
-      log.withContext(context.requestId).error('Calculation failed', error instanceof Error ? error : new Error(String(error)), {
-        expression,
-      });
+      log
+        .withContext(context.requestId)
+        .error('Calculation failed', error instanceof Error ? error : new Error(String(error)), {
+          expression,
+        });
 
       return {
         content: [
@@ -92,7 +92,9 @@ function sanitizeExpression(expression: string): string {
   const allowedChars = /^[0-9+\-*/().\s]+$/;
 
   if (!allowedChars.test(expression)) {
-    throw new Error('Invalid characters in expression. Only numbers and basic operators (+, -, *, /, (, )) are allowed.');
+    throw new Error(
+      'Invalid characters in expression. Only numbers and basic operators (+, -, *, /, (, )) are allowed.'
+    );
   }
 
   return expression.trim();

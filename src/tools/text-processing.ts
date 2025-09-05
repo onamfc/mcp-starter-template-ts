@@ -1,18 +1,34 @@
 /**
  * Text Processing Tool
- * Provides various text manipulation and analysis capabilities
  */
 
 import { ToolDefinition, ToolContext } from '../types/index.js';
 import { log } from '../utils/logger.js';
 
+type Operation = 'count' | 'uppercase' | 'lowercase' | 'reverse' | 'wordcount' | 'sentiment';
+type CountResult = {
+  total: number;
+  withoutWhitespace: number;
+  whitespace: number;
+  /** Mirrors includeWhitespace option: if true -> total, else -> withoutWhitespace */
+  selectedTotal: number;
+};
+type WordStats = {
+  words: number;
+  sentences: number;
+  paragraphs: number;
+  averageWordsPerSentence: number;
+};
+type SentimentResult = {
+  sentiment: 'positive' | 'negative' | 'neutral';
+  score: number;
+  confidence: number;
+};
 
-/**
- * Text processing tool implementation
- */
 export const textProcessingTool: ToolDefinition = {
   name: 'text-processing',
-  description: 'Process and analyze text with various operations like counting, formatting, and transformation',
+  description:
+    'Process and analyze text with operations like character/word counts, case transforms, reverse, and basic sentiment.',
   inputSchema: {
     type: 'object',
     properties: {
@@ -32,85 +48,86 @@ export const textProcessingTool: ToolDefinition = {
           caseSensitive: {
             type: 'boolean',
             default: true,
-            description: 'Whether to consider case in operations',
+            description: 'Whether to consider case for certain operations',
           },
           includeWhitespace: {
             type: 'boolean',
             default: true,
-            description: 'Whether to include whitespace in character counts',
+            description: 'Whether to include whitespace in character totals (count op)',
           },
         },
       },
     },
     required: ['operation', 'text'],
   },
+
   handler: async (args: Record<string, unknown>, context: ToolContext) => {
-    const { operation, text, options = {} } = args as {
-      operation: 'count' | 'uppercase' | 'lowercase' | 'reverse' | 'wordcount' | 'sentiment';
+    const { operation, text, options } = args as {
+      operation: Operation;
       text: string;
-      options?: {
-        caseSensitive?: boolean;
-        includeWhitespace?: boolean;
-      };
+      options?: { caseSensitive?: boolean; includeWhitespace?: boolean };
     };
 
-    try {
-      log.withContext(context.requestId).info(`Text processing operation: ${operation}`, {
-        textLength: text.length,
-        options,
-      });
+    const safeText = typeof text === 'string' ? text : '';
+    const opts = {
+      caseSensitive: options?.caseSensitive ?? true,
+      includeWhitespace: options?.includeWhitespace ?? true,
+    };
 
-      let result: unknown;
+    const requestId = context.requestId;
+    log.withContext(requestId).info(`Text processing: ${operation}`, {
+      textLength: safeText.length,
+      options: opts,
+    });
+
+    try {
+      let result: string | CountResult | WordStats | SentimentResult;
 
       switch (operation) {
-        case 'count':
-          result = countCharacters(text, options);
+        case 'count': {
+          result = countCharacters(safeText, opts.includeWhitespace);
           break;
+        }
         case 'uppercase':
-          result = text.toUpperCase();
+          result = safeText.toUpperCase();
           break;
         case 'lowercase':
-          result = text.toLowerCase();
+          result = safeText.toLowerCase();
           break;
         case 'reverse':
-          result = text.split('').reverse().join('');
+          result = reverseGraphemes(safeText);
           break;
         case 'wordcount':
-          result = countWords(text);
+          result = countWords(safeText);
           break;
         case 'sentiment':
-          result = analyzeSentiment(text);
+          result = analyzeSentiment(safeText);
           break;
         default:
-          throw new Error(`Unsupported operation: ${operation}`);
+          throw new Error(`Unsupported operation: ${String(operation)}`);
       }
 
-      log.withContext(context.requestId).info(`Text processing completed: ${operation}`);
+      log.withContext(requestId).info(`Text processing completed: ${operation}`);
+
+      const asObject = typeof result === 'string' ? { value: result } : result;
 
       return {
         content: [
+          { type: 'text', text: JSON.stringify(asObject) },
           {
             type: 'text',
-            text: typeof result === 'object'
-              ? JSON.stringify(result, null, 2)
-              : String(result),
+            text: typeof result === 'string' ? result : JSON.stringify(result, null, 2),
           },
         ],
       };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown text processing error';
-
-      log.withContext(context.requestId).error(`Text processing failed: ${operation}`, error instanceof Error ? error : new Error(String(error)), {
-        textLength: text.length,
-      });
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      log
+        .withContext(requestId)
+        .error(`Text processing failed: ${operation}`, error, { textLength: safeText.length });
 
       return {
-        content: [
-          {
-            type: 'text',
-            text: `Error: ${errorMessage}`,
-          },
-        ],
+        content: [{ type: 'text', text: `Error: ${error.message}` }],
         isError: true,
       };
     }
@@ -120,81 +137,121 @@ export const textProcessingTool: ToolDefinition = {
 /**
  * Count characters in text
  */
-function countCharacters(text: string, options: { includeWhitespace?: boolean } = {}): {
-  total: number;
-  withoutWhitespace: number;
-  whitespace: number;
-} {
-  const total = text.length;
-  const withoutWhitespace = text.replace(/\s/g, '').length;
+function countCharacters(text: string, includeWhitespace: boolean): CountResult {
+  // Use code-point aware length
+  const total = Array.from(text).length;
+  const withoutWhitespace = Array.from(text.replace(/\s/g, '')).length;
   const whitespace = total - withoutWhitespace;
-
-  return {
-    total,
-    withoutWhitespace,
-    whitespace,
-  };
+  const selectedTotal = includeWhitespace ? total : withoutWhitespace;
+  return { total, withoutWhitespace, whitespace, selectedTotal };
 }
 
 /**
- * Count words in text
+ * Reverse string with basic grapheme safety
  */
-function countWords(text: string): {
-  words: number;
-  sentences: number;
-  paragraphs: number;
-  averageWordsPerSentence: number;
-} {
-  const words = text.trim().split(/\s+/).filter(word => word.length > 0).length;
-  const sentences = text.split(/[.!?]+/).filter(sentence => sentence.trim().length > 0).length;
-  const paragraphs = text.split(/\n\s*\n/).filter(paragraph => paragraph.trim().length > 0).length;
+function reverseGraphemes(text: string): string {
+  try {
+    if (typeof Intl !== 'undefined' && (Intl as any).Segmenter) {
+      const seg = new (Intl as any).Segmenter(undefined, { granularity: 'grapheme' });
+      const parts: string[] = [];
+      for (const { segment } of seg.segment(text)) parts.push(segment);
+      return parts.reverse().join('');
+    }
+  } catch {
+    // ignore
+  }
+  return Array.from(text).reverse().join('');
+}
+
+/**
+ * Count words / sentences / paragraphs
+ */
+function countWords(text: string): WordStats {
+  const normalized = normalizeText(text);
+
+  const wordTokens = normalized.split(/\s+/).filter(Boolean);
+  const words = wordTokens.length;
+
+  const sentences = normalized
+    .split(/[.!?]+(?:\s|$)/)
+    .map(s => s.trim())
+    .filter(Boolean).length;
+
+  const paragraphs = normalized
+    .split(/\n\s*\n/)
+    .map(p => p.trim())
+    .filter(Boolean).length;
+
   const averageWordsPerSentence = sentences > 0 ? Math.round((words / sentences) * 100) / 100 : 0;
 
-  return {
-    words,
-    sentences,
-    paragraphs,
-    averageWordsPerSentence,
-  };
+  return { words, sentences, paragraphs, averageWordsPerSentence };
 }
 
 /**
- * Basic sentiment analysis
+ * Basic keyword sentiment (toy; deterministic)
  */
-function analyzeSentiment(text: string): {
-  sentiment: 'positive' | 'negative' | 'neutral';
-  score: number;
-  confidence: number;
-} {
-  // Simple keyword-based sentiment analysis
-  const positiveWords = ['good', 'great', 'excellent', 'amazing', 'wonderful', 'fantastic', 'love', 'like', 'happy', 'joy'];
-  const negativeWords = ['bad', 'terrible', 'awful', 'horrible', 'hate', 'dislike', 'sad', 'angry', 'frustrated', 'disappointed'];
+function analyzeSentiment(text: string): SentimentResult {
+  const normalized = normalizeText(text).toLowerCase();
+  const tokens = normalized
+    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+    .split(/\s+/)
+    .filter(Boolean);
 
-  const words = text.toLowerCase().split(/\s+/);
+  const positive = new Set([
+    'good',
+    'great',
+    'excellent',
+    'amazing',
+    'wonderful',
+    'fantastic',
+    'love',
+    'like',
+    'happy',
+    'joy',
+    'awesome',
+    'pleasant',
+    'delight',
+  ]);
 
-  let positiveCount = 0;
-  let negativeCount = 0;
+  const negative = new Set([
+    'bad',
+    'terrible',
+    'awful',
+    'horrible',
+    'hate',
+    'dislike',
+    'sad',
+    'angry',
+    'frustrated',
+    'disappointed',
+    'poor',
+    'worse',
+    'worst',
+  ]);
 
-  words.forEach(word => {
-    if (positiveWords.includes(word)) positiveCount++;
-    if (negativeWords.includes(word)) negativeCount++;
-  });
+  let pos = 0,
+    neg = 0;
+  for (const t of tokens) {
+    if (positive.has(t)) pos++;
+    if (negative.has(t)) neg++;
+  }
 
-  const totalSentimentWords = positiveCount + negativeCount;
-  const score = totalSentimentWords > 0
-    ? (positiveCount - negativeCount) / totalSentimentWords
-    : 0;
+  const total = pos + neg;
+  const raw = total > 0 ? (pos - neg) / total : 0;
 
-  let sentiment: 'positive' | 'negative' | 'neutral';
-  if (score > 0.1) sentiment = 'positive';
-  else if (score < -0.1) sentiment = 'negative';
-  else sentiment = 'neutral';
+  const sentiment: SentimentResult['sentiment'] =
+    raw > 0.1 ? 'positive' : raw < -0.1 ? 'negative' : 'neutral';
 
-  const confidence = Math.min(Math.abs(score) * 2, 1);
+  const confidence = Math.min(Math.abs(raw) * 2, 1);
 
   return {
     sentiment,
-    score: Math.round(score * 1000) / 1000,
+    score: Math.round(raw * 1000) / 1000,
     confidence: Math.round(confidence * 1000) / 1000,
   };
+}
+
+function normalizeText(text: string): string {
+  // Normalize line endings and trim outer whitespace
+  return text.replace(/\r\n?/g, '\n').trim();
 }

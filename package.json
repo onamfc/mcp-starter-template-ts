@@ -1,13 +1,13 @@
 {
   "name": "mcp-starter-template",
   "version": "1.0.0",
-  "description": "A comprehensive starter template for Model Context Protocol (MCP) servers",
+  "description": "A comprehensive starter template written in Typescript for Model Context Protocol (MCP) servers",
   "main": "dist/server.js",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "build": "tsc && tsc-alias",
-    "start": "node dist/server.js",
+    "dev": "tsx watch src/start.ts",
+    "build": "tsc -p tsconfig.json && tsc-alias",
+    "start": "node dist/start.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
@@ -24,7 +24,7 @@
     "docker:run": "docker run -p 3000:3000 mcp-server",
     "docker:dev": "docker-compose up --build",
     "health": "curl -f http://localhost:3000/health || exit 1",
-    "validate-config": "node -e \"require('./dist/utils/config.js').validateConfig()\""
+    "validate-config": "node -e \"import('./dist/utils/config.js').then(m=>m.validateConfig())\""
   },
   "keywords": [
     "mcp",
@@ -36,7 +36,7 @@
     "template",
     "starter"
   ],
-  "author": "Your Name <your.email@example.com>",
+  "author": "Brandon Estrella <brandonestrelladev@gmail.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -60,8 +60,8 @@
   "devDependencies": {
     "@types/node": "^20.10.0",
     "@types/jest": "^29.5.8",
-    "@typescript-eslint/eslint-plugin": "^6.13.0",
-    "@typescript-eslint/parser": "^6.13.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
     "eslint": "^8.54.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.1",
@@ -72,11 +72,5 @@
     "prettier": "^3.1.0",
     "rimraf": "^5.0.5",
     "@types/winston": "^2.4.4"
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "roots": ["<rootDir>/src"],
-    "testMatch": ["**/__tests__/**/*.test.ts"]
   }
 }

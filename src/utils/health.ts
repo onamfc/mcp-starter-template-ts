@@ -62,7 +62,7 @@ export class HealthChecker {
    */
   public async stop(): Promise<void> {
     if (this.server) {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         this.server!.close(() => {
           log.info('Health check server stopped');
           resolve();
@@ -74,7 +74,7 @@ export class HealthChecker {
   /**
    * Handle health check requests
    */
-  private handleHealthCheck(req: any, res: any): void {
+  private handleHealthCheck(req: unknown, res: any): void {
     const uptime = Date.now() - this.startTime;
 
     const healthResponse: HealthCheckResponse = {
@@ -92,7 +92,7 @@ export class HealthChecker {
   /**
    * Handle metrics requests
    */
-  private handleMetrics(req: any, res: any): void {
+  private handleMetrics(req: unknown, res: any): void {
     this.metrics.uptime = Date.now() - this.startTime;
 
     res.writeHead(200, { 'Content-Type': 'application/json' });

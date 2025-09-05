@@ -3,9 +3,9 @@
  * Comprehensive tests for the main server functionality
  */
 
-import { MCPServer } from '../server';
-import { getConfig } from '../utils/config';
-import { initializeLogger } from '../utils/logger';
+import { MCPServer } from '../server-core.js';
+import { getConfig } from '../utils/config.js';
+import { initializeLogger } from '../utils/logger.js';
 
 // Mock the config and logger
 jest.mock('../utils/config');

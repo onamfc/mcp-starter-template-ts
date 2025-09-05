@@ -6,7 +6,6 @@
 import { ResourceDefinition, ResourceContext } from '../types/index.js';
 import { log } from '../utils/logger.js';
 
-
 /**
  * Documentation resource implementation
  */
@@ -71,7 +70,13 @@ All operations are logged and validated. File access is restricted to the projec
         },
       ];
     } catch (error) {
-      log.withContext(context.requestId).error('Failed to access documentation resource', error instanceof Error ? error : new Error(String(error)), { uri });
+      log
+        .withContext(context.requestId)
+        .error(
+          'Failed to access documentation resource',
+          error instanceof Error ? error : new Error(String(error)),
+          { uri }
+        );
       throw error;
     }
   },
