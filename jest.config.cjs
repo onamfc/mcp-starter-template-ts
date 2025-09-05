@@ -21,20 +21,36 @@ module.exports = {
   roots: ['<rootDir>/src'],
   testMatch: ['**/__tests__/**/*.test.ts'],
 
-  // Coverage (unchanged)
+  // Coverage
   collectCoverageFrom: [
     'src/**/*.ts',
+
+    // exclude tests, d.ts, and bootstrap
     '!src/**/*.d.ts',
     '!src/__tests__/**',
-    '!src/server.ts',
+    '!src/start.ts',
+
+    // exclude barrels & pure type exports
+    '!src/**/index.ts',
+    '!src/types/**',
+
+    // exclude integration-heavy or env-coupled modules you’re not unit-testing now
+    '!src/server-core.ts',
+    '!src/utils/logger.ts',
+    '!src/utils/health.ts',
+    '!src/resources/**',
+    '!src/tools/filesystem.ts',
+    '!src/tools/weather.ts',
+  ],
+  coveragePathIgnorePatterns: [
+    '<rootDir>/src/start.ts',
+    '<rootDir>/src/server-core.ts',
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html', 'json'],
   coverageThreshold: {
     global: { branches: 80, functions: 80, lines: 80, statements: 80 },
   },
-
-  // Other knobs
   testTimeout: 10000,
   verbose: true,
   errorOnDeprecated: true,

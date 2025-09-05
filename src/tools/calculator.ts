@@ -10,7 +10,7 @@ import { log } from '../utils/logger.js';
  * Calculator tool implementation
  */
 export const calculateTool: ToolDefinition = {
-  name: 'calculate',
+  name: 'calculator',
   description: 'Perform mathematical calculations with support for basic arithmetic operations',
   inputSchema: {
     type: 'object',
